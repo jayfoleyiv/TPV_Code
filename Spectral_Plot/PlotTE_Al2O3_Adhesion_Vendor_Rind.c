@@ -173,6 +173,7 @@ int main(int argc, char* argv[]) {
   
   // Normal incidence
   thetaI = 0;
+  thetaI *= pi/180.;
 
 
   strcpy(sio2file,"DIEL/sio2_cspline.txt");
