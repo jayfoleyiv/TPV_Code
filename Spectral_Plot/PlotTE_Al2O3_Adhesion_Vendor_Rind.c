@@ -151,8 +151,8 @@ int main(int argc, char* argv[]) {
   }
 
 
-  d[Nlayer-3] = 0.01;
-  rind[Nlayer-3] = sqrt(epsbg) + 0.*I;
+  d[Nlayer-3] = 0.02;
+  d[Nlayer-3] = sqrt(epsbg) + 0.*I;
  
   d[Nlayer-2] = 0.9;
   rind[Nlayer-2] = 1.0 + 0.*I;
@@ -219,7 +219,7 @@ int main(int argc, char* argv[]) {
      rind[1] = eta + I*kappa; 
 
      // Now start the PC - uncomment for vendor data!
-    /*for (j=2; j<Nlayer-3; j++) {
+    for (j=2; j<Nlayer-3; j++) {
 
       if (j%2==0) {
         rind[j] = sio2_rind[i];
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
       else {
         rind[j] = tio2_rind[i];
       }
-    }*/
+    }
 
      // Alumina layer
      rind[Nlayer-3] = alumina_ald[i];
@@ -236,7 +236,8 @@ int main(int argc, char* argv[]) {
      // Pure W underlayer
      MaxwellGarnett(1., epsbg, w_sub[i], &eta, &kappa);
      rind[Nlayer-2] = eta + I*kappa;
-
+     // Silicon substrate
+     //rind[Nlayer-2] = 3.5 + 0.*I;
 
      TransferMatrix(thetaI, k0, rind, d, &cosL, &beta, &alpha, &m11, &m21);
 
