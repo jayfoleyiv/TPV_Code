@@ -206,8 +206,16 @@ int main(int argc, char* argv[]) {
 
           rind[1] = 1.00 + 0.*I;
 
-          // Now start the Bragg Reflector
-          for (i=2; i<Nlayer-2; i++) {
+          // Now start the Bragg Reflector that the vendor provided
+          d[2] = 0.2324;
+          rind[2] = nlow + 0.*I;
+          d[3] = 0.1687;
+          rind[3] = nhi + 0.*I;
+          d[4] = 0.2119;
+          rind[4] = nlow + 0.*I;
+          d[5] = 0.162;
+          rind[5] = nhi + 0.*I;
+          /*for (i=2; i<Nlayer-2; i++) {
 
             if (i%2==0) {
               //d[i] = d1*fac1;
@@ -220,7 +228,7 @@ int main(int argc, char* argv[]) {
               rind[i] = nhi + 0.*I;
             }
           }
-
+          */
           d[Nlayer-3] = 0.01;
           rind[Nlayer-3] = sqrt(epsbg) + 0.*I;
           // W layer that is the substrate for the Bragg Reflector
