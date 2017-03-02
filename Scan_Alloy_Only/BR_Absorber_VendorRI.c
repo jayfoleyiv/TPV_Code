@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
 
   for (TK=0; TK<numVf; TK++) {
 
-    vf1 = 0. + (1./20)*TK;
+    vf1 = 0. + (0.40/20)*TK;
     VFa[TK] = vf1;
   
     // Loop over different factors to multiply d1 by
