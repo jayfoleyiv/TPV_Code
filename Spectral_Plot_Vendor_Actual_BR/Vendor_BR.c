@@ -149,6 +149,14 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  d[1] = 0.2324;
+  d[2] = 0.1687;
+  d[3] = 0.2119;
+  d[4] = 0.162;
+
+
+
+
   d[Nlayer-3] = 0.01;
   d[Nlayer-2] = 0.9;
   rind[Nlayer-3] = sqrt(epsbg) + 0.*I;
