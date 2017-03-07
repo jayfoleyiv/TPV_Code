@@ -207,7 +207,7 @@ int main(int argc, char* argv[]) {
           rind[1] = 1.00 + 0.*I;
 
           // Now start the Bragg Reflector that the vendor provided
-          d[2] = 0.2324;
+          d[2] = 0.2124;
           rind[2] = nlow + 0.*I;
           d[3] = 0.1687;
           rind[3] = nhi + 0.*I;

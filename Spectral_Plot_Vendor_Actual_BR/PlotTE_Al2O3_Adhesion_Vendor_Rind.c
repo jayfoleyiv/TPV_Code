@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
     }
   }
   // Actual vendor dimensions
-  d[2] = 0.2324;
+  d[2] = 0.2124;
   d[3] = 0.1687;
   d[4] = 0.2119;
   d[5] = 0.162;
