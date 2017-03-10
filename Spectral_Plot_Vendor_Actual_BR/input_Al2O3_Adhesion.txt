@@ -5,7 +5,7 @@ d2                 0.1785
 n2                 2.1
 d3                 0.486
 d4                 0.900
-VolumeFraction1    0.20
+VolumeFraction1    0.38
 VolumeFraction2    1.0
 EpsilonBackground  3.097
 Temperature        1700

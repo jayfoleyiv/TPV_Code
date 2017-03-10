@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
   // The first layer is the absorber layer critically coupled to the PC... can be quite thin 
   // !!!! Ordinarily we do 20 nm, but with vendor BR that is not on target, thicker BR with lower vF 
   // !!!! performs slightly better
-  d[1] = 0.032;
+  d[1] = 0.038;
   rind[0] = 1.00 + 0.*I;
   rind[1] = 1.00 + 0.*I;
 
