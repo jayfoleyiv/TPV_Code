@@ -15,10 +15,10 @@ void TransferMatrix(double thetaI, double k0, double complex *rind, double *d,
 double complex *cosL, double *beta, double *alpha, double complex *m11, double complex *m21);
 double SpectralEfficiency(double *emissivity, int N, double *lambda, double lambdabg, double Temperature, double *P);
 void MaxwellGarnett(double f, double epsD, double complex epsM, double *eta, double *kappa);
+void Bruggenman(double f, double epsD, double complex epsM, double *eta, double *kappa);
 void Lorentz(double we, double de, double w, double *epsr, double *epsi);
 int ReadDielectric(char *file, double *lambda, double complex *epsM);
 int IsDominated(int idx, int LENGTH, double *O1,double *O2);
-double SpectralEfficiency_Fit(int num1, int num2, int num3, int num4);
 void ReadBRRind(int numBR, double lambda, double *BRlambda, double complex *BRind, double *n, double *k); 
 // Global variables
 int Nlayer;
@@ -257,7 +257,8 @@ int main(int argc, char* argv[]) {
            epsbg = creal(alumina_ald[i]*alumina_ald[i]);
            double complex epsald  = w_ald[i]*w_ald[i];
            // Alloy superstrate Layer (Layer 1 in the structure [Layer 0 is air!])
-           MaxwellGarnett(vf1, epsbg, epsald, &eta, &kappa);
+           //MaxwellGarnett(vf1, epsbg, epsald, &eta, &kappa);
+           Bruggenman(vf1, epsbg, epsald, &eta, &kappa);
            rind[1] = eta + I*kappa; 
 
            // Now start the PC
@@ -624,6 +625,27 @@ double SpectralEfficiency(double *emissivity, int N, double *lambda, double lbg,
 
 }
 
+void Bruggenman(double f, double epsD, double complex epsM, double *eta, double *kappa) {
+  // medium 1 is surrounding medium (dielectric)
+  // medium 2 is inclusion (W) - f passed to function is volume fraction of inclusion
+  double f1, f2;
+  double complex b, eps1, eps2, epsBG;
+  eps1 = epsD + 0.*I;
+  eps2 = epsM;
+
+
+  f1 = (1 - f);
+  f2 = f;
+  b = (2*f1 - f2)*eps1 + (2*f2 - f1)*eps2;
+
+  epsBG = (b + csqrt(8.*eps1*eps2 + b*b))/4.;
+
+  // test to see that epsBG satisfy Bruggenman condition
+  double complex test;
+   *eta   = creal(csqrt(epsBG));
+   *kappa = cimag(csqrt(epsBG));
+
+}
 
 
 void MaxwellGarnett(double f, double epsD, double complex epsM, double *eta, double *kappa) {
@@ -755,204 +777,5 @@ int IsDominated(int idx, int LENGTH, double *O1,double *O2) {
         }
       }
   return rval;
-}
-
-
-
-double SpectralEfficiency_Fit(int num1, int num2, int num3, int num4) {
-
-  int Nlayer;
-  int polflag;
-  double c = 299792458;
-  double pi=3.141592653589793;
-
-  int i, j, k;
-  // complex double precision variables
-  double complex m11, m21, r, t, st, cosL;
-  double complex *rind, *epslist, nlow, nhi;
-
-  // real double precision variables
-  double R, T, A, *d, thetaI, lambda, k0, alpha, beta;
-  double sti, n1, n2, thetaT, rp, Rp, Tangle;
-  double eta, kappa;
-  double we, de, w;
-  double d1, d2, vf1, vf2, dspace, epsbg;
-
-  // Lists for spectral efficiency
-  double *LamList, *Emiss;
-
-  // Variables for Spectral Efficiency
-  double Temp, lbg;
-  // This is intentionally larger than number of wavelength values in data files
-  int NumLam=10000;
-
-  //  Allocate arrays for spectral efficiency
-  LamList = VEC_DOUBLE(NumLam);
-  Emiss   = VEC_DOUBLE(NumLam);
-
-  //   Metal epsilon array
-  epslist = (double complex*)malloc(NumLam*sizeof(double complex));
-
-  // File pointer(s)
-  FILE *fp;
-  // Character string(s)
-  char *line, *epsfile;
-
-  epsfile = VEC_CHAR(1000);
-  line    = VEC_CHAR(1000);
-
-
-  // Open the file for writing!
-  fp = fopen("input.txt","r");
-
-
-
-    fscanf(fp,"%s",line);  // Nlayer
-    fscanf(fp,"%i",&Nlayer);
-    fscanf(fp,"%s",line);   //  d1
-    fscanf(fp,"%lf",&d1);
-    fscanf(fp,"%s",line);  //  nlow
-    fscanf(fp,"%lf",&nlow);
-    fscanf(fp,"%s",line);  // d2
-    fscanf(fp,"%lf",&d2);
-    fscanf(fp,"%s",line);  // nhi
-    fscanf(fp,"%lf",&nhi);
-    fscanf(fp,"%s",line);  // volume fraction
-    fscanf(fp,"%lf",&vf1);
-    fscanf(fp,"%s",line);  // epsbg
-    fscanf(fp,"%lf",&epsbg);
-    fscanf(fp,"%s",line);  // Temp
-    fscanf(fp,"%lf",&Temp);
-    fscanf(fp,"%s",line);  //Lambda bg
-    fscanf(fp,"%lf",&lbg);
-
-  //printf("  NLayer is %i\n",Nlayer);
-  // Polarization convention (polflag=1 is p-polarized, polflag=2 is s-polarized
-  polflag=1;
-
-  // These are the parameters
-  vf1=num1/1023.;
-  Nlayer=num2;
-  dspace=num3/1023.;
-  vf2=num4/1023.;
-  printf("  Nlayer is %i\n",Nlayer);
-  fflush(stdout);
-
-
-  d = VEC_DOUBLE(Nlayer);
-  rind = (double complex*)malloc(Nlayer*sizeof(double complex));
-
-  strcpy(epsfile,"DIEL/W_Palik.txt");
-  NumLam = ReadDielectric(epsfile, LamList, epslist);
-
-
-
-  // Vector to store the thicknesses in micrometers of each layer
-  d[0] = 0.;
-  // The first layer is the absorber layer critically coupled to the PC... can be quite thin
-  d[1] = 0.02;
-  rind[0] = 1.00 + 0.*I;
-  rind[1] = 1.00 + 0.*I;
-
-  // Now start the PC
-  for (i=2; i<Nlayer-1; i++) {
-
-    if (i%2==0) {
-      d[i] = d1;
-      rind[i] = nlow + 0.*I;
-    }
-    else {
-      d[i] = d2;
-      rind[i] = nhi + 0.*I;
-    }
-  }
-  // N-4 layer should be spacer layer
-  d[Nlayer-3] = dspace;
-  rind[Nlayer-3] = sqrt(epsbg) + 0.*I;
-
-
-  // N-2 layer should be thick W
-  d[Nlayer-2] = 0.4;
-  rind[Nlayer-2] = 1.0 + 0.*I;
-
-  // Final layer is air
-  d[Nlayer-1] = 0.;
-  rind[Nlayer-1] = 1.0 + 0.*I;
-
-  lambda = 500.;
-
-  // Wavenumber in inverse micrometers
-  k0 = 1000./lambda;
-
-  //  Top/Bottom layer RI for Transmission calculation
-  n1 = creal(rind[0]);
-  n2 = creal(rind[Nlayer-1]);
-
-  // Normal incidence
-  thetaI = 0;
-
-
-  double PU;
-
-
-  for (i=0; i<NumLam; i++) {
-
-     // Solve transfer matrix equations for incident angle thatI, wavenumber k0,
-     // and structure defined by layers with refractive indices stored in the vector rind
-     // and geometries stored in the vector d
-     lambda = LamList[i];   // Lambda in meters
-
-     k0 = 2*pi*1e-6/lambda;  // k0 in inverse microns
-     w=2*pi*c/lambda;
-
-     // Alloy layer
-     MaxwellGarnett(vf1, epsbg, epslist[i], &eta, &kappa);
-
-     rind[1] = eta + I*kappa;
-
-     // Spacer alloy
-     MaxwellGarnett(vf2, epsbg, epslist[i], &eta, &kappa);
-     rind[Nlayer-3] = eta + I*kappa;
-
-     // Pure W underlayer
-     MaxwellGarnett(1., epsbg, epslist[i], &eta, &kappa);
-     rind[Nlayer-2] = eta + I*kappa;
-
-     TransferMatrix(thetaI, k0, rind, d, &cosL, &beta, &alpha, &m11, &m21);
-     //TransferMatrix(Nlayer, polflag, thetaI, k0, rind, d, &cosL, &beta, &alpha, &m11, &m21);
-
-     // Fresnel reflection coefficient (which is complex if there are absorbing layers)
-     r = m21/m11;
-
-     // Stored energy
-     st = (r + 1);
-     st = st*conj(st);
-     // Fresnel transmission coefficient (also complex if there are absorbing layers)
-     t = 1./m11;
-
-     // Reflectance, which is a real quantity between 0 and 1
-     R = creal(r*conj(r));
-     Tangle =  n2*creal(cosL)/(n1*cos(thetaI));
-     T = creal(t*conj(t))*Tangle;
-     A = 1 - R - T;
-
-
-     // Store absorbance in array Emiss
-     Emiss[i] = A;
-  }
-
-  double SE = SpectralEfficiency(Emiss, NumLam, LamList, lbg, Temp, &PU);
-  return SE;
-
-  fclose(fp);
-  free(LamList);
-  free(Emiss);
-  free(epslist);
-  free(epsfile);
-  free(line);
-  free(rind);
-  free(d);
-
-
 }
 
