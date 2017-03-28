@@ -318,7 +318,7 @@ int main(int argc, char* argv[]) {
 
 
   FILE *pf;
-  pf = fopen("paretto_rakic.txt","w");
+  pf = fopen("paretto_bruggeman_1273.txt","w");
   int id;
 
   for (TK=0; TK<numVf; TK++) {
