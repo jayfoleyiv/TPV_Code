@@ -20,6 +20,8 @@ void Bruggenman(double f, double epsD, double complex epsM, double *eta, double 
 void Lorentz(double we, double de, double w, double *epsr, double *epsi);
 int ReadDielectric(char *file, double *lambda, double complex *epsM);
 void ReadBRRind(int numBR, double lambda, double *BRlambda, double complex *BRind, double *n, double *k);
+double complex P_Sqrt(double complex z); 
+
 // Global variables
 int Nlayer;
 int polflag;
@@ -679,3 +681,16 @@ void ReadBRRind(int numBR, double lambda, double *BRlambda, double complex *BRin
 
 }
 
+
+double complex P_Sqrt(double complex z) {
+
+  double r, z_r;
+  double sqrtz_r, sqrtz_i;
+
+  r = sqrt( creal( z*conj(z) ));
+  
+  sqrtz_r  = sqrt((r + creal(z))/2.);
+  sqrtz_i  = sqrt((r - creal(z))/2.);
+
+  return (sqrtz_r + I*sqrtz_i);
+}
