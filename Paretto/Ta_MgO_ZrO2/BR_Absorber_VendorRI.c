@@ -15,6 +15,7 @@ void CMatMult2x2(int Aidx, double complex *A, int Bidx, double complex *B, int C
 void TransferMatrix(double thetaI, double k0, double complex *rind, double *d,
 double complex *cosL, double *beta, double *alpha, double complex *m11, double complex *m21);
 double SpectralEfficiency(double *emissivity, int N, double *lambda, double lambdabg, double Temperature, double *P);
+void Bruggenman(double f, double epsD, double complex epsM, double *eta, double *kappa);
 void MaxwellGarnett(double f, double epsD, double complex epsM, double *eta, double *kappa);
 void Lorentz(double we, double de, double w, double *epsr, double *epsi);
 int ReadDielectric(char *file, double *lambda, double complex *epsM);
@@ -246,9 +247,11 @@ int main(int argc, char* argv[]) {
            w=2*pi*c/lambda;        // angular frequency 
  
            epsbg = creal(alumina_ald[i]*alumina_ald[i]);
-           double complex epsald  = w_ald[i]*w_ald[i];
+           // Ta data is dielectric constant, not refractive index
+           double complex epsald  = w_ald[i];
            // Alloy superstrate Layer (Layer 1 in the structure [Layer 0 is air!])
-           MaxwellGarnett(vf1, epsbg, epsald, &eta, &kappa);
+           Bruggenman(vf1, epsbg, epsald, &eta, &kappa);
+           //MaxwellGarnett(vf1, epsbg, epsald, &eta, &kappa);
            rind[1] = eta + I*kappa; 
 
            // Alumina layer
@@ -604,7 +607,27 @@ double SpectralEfficiency(double *emissivity, int N, double *lambda, double lbg,
 
 }
 
+void Bruggenman(double f, double epsD, double complex epsM, double *eta, double *kappa) {
+  // medium 1 is surrounding medium (dielectric)
+  // medium 2 is inclusion (W) - f passed to function is volume fraction of inclusion
+  double f1, f2;
+  double complex b, eps1, eps2, epsBG;
+  eps1 = epsD + 0.*I;
+  eps2 = epsM;
 
+
+  f1 = (1 - f);
+  f2 = f;
+  b = (2*f1 - f2)*eps1 + (2*f2 - f1)*eps2;
+
+  epsBG = (b + csqrt(8.*eps1*eps2 + b*b))/4.;
+
+  // test to see that epsBG satisfy Bruggenman condition
+  double complex test;
+   *eta   = creal(csqrt(epsBG));
+   *kappa = cimag(csqrt(epsBG));
+
+}
 
 void MaxwellGarnett(double f, double epsD, double complex epsM, double *eta, double *kappa) {
    double complex num, denom;
