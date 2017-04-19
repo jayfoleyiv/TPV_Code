@@ -242,7 +242,7 @@ int main(int argc, char* argv[]) {
          for (i=0; i<NumLam; i++) {
  
            lambda = LamList[i];    // Lambda in meters
-           k0 = 2*pi*1e-6/lambda;  // k0 in inverse microns
+           k0 = 2*pi*1e-6/lambda;  // k0 in inverse microns - verified
            w=2*pi*c/lambda;        // angular frequency 
  
            epsbg = creal(alumina_ald[i]*alumina_ald[i]);
