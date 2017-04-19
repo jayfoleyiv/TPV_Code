@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   double complex *rind, nlow, nhi;
   double complex *sio2_rind, *tio2_rind, *w_sub, *w_ald, *alumina_ald;
   double PU;
-
+  //
   double h=6.626e-34;
   double kb = 1.38064852e-23;
   double rho;
