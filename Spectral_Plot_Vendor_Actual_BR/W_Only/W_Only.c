@@ -139,12 +139,6 @@ int main(int argc, char* argv[]) {
   d[2] = 0.;
   rind[2] = 1. + 0.*I;
 
-  // Wavelength in nanometers
-  lambda = 500.;
-
-  // Wavenumber in inverse micrometers
-  k0 = 1000./lambda;
-
   //  Top/Bottom layer RI for Transmission calculation
   n1 = creal(rind[0]);
   n2 = creal(rind[2]);
@@ -185,7 +179,7 @@ int main(int argc, char* argv[]) {
      // and geometries stored in the vector d
      lambda = LamList[i];   // Lambda in meters
 
-     k0 = 2*pi*1e-6/lambda;  // k0 in inverse microns
+     k0 = 2*pi*1e-6/lambda;  // k0 in inverse microns - Verified
      w=2*pi*c/lambda;     
 
      // Alumina - though this isn't really necessary!
