@@ -1,0 +1,2 @@
+Temperature        1700
+LambdaBG           2254e-9

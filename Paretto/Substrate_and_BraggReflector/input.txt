@@ -1,0 +1,7 @@
+NLayer             5
+d1                 0.300
+n1                 1.73
+d2                 0.200
+n2                 2.5
+Temperature        1700
+LambdaBG           2254e-9

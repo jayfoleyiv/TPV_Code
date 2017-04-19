@@ -1,0 +1,2 @@
+#  There are 4001 elements in file DIEL/W_Palik.txt
+  1700.000000  0.5317346879  5.9797314894e+04
