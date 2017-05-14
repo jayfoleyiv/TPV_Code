@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
   // real double precision variables
   double RP, TP, AP, RS, TS, AS, *d, thetaI, lambda, k0, alphaP, alphaS, betaP, betaS;
-  double sti, n1, n2, thetaT, rp, Rp, Tangle;
+  double sti, n1, n2, thetaT, Rp, Tangle;
   double eta, kappa;
   double we, de, w;
   double d1, d2, d3, d4, vf1, vf2, epsbg;
